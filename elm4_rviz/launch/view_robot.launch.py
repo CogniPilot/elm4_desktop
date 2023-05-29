@@ -15,63 +15,27 @@ ARGUMENTS = [
         'use_sim_time',
         default_value='false',
         description='Use simulation (Gazebo) clock if true'),
-    DeclareLaunchArgument(
-        'description',
-        default_value='false',
-        description='Launch elm4 description'
-    ),
-    DeclareLaunchArgument(
-        'model',
-        default_value='lidar',
-        choices=['base', 'lidar'],
-        description='El Mandadero'
-    ),
-    DeclareLaunchArgument(
-        'namespace',
-        default_value='',
-        description='Robot namespace'
-    ),
 ]
 
 
 def generate_launch_description():
 
     pkg_elm4_rviz = get_package_share_directory('elm4_rviz')
-    pkg_elm4_description = get_package_share_directory('elm4_description')
 
     rviz2_config = PathJoinSubstitution(
         [pkg_elm4_rviz, 'rviz', 'nav2', 'robot.rviz'])
-    description_launch = PathJoinSubstitution(
-        [pkg_elm4_description, 'launch', 'robot_description.launch.py']
-    )
 
-    namespace = LaunchConfiguration('namespace')
-
-    rviz = GroupAction([
-        PushRosNamespace(namespace),
-
-        Node(package='rviz2',
-             executable='rviz2',
-             name='rviz2',
-             arguments=['-d', rviz2_config],
-             parameters=[{'use_sim_time': LaunchConfiguration('use_sim_time')}],
-             remappings=[
-                ('/tf', 'tf'),
-                ('/tf_static', 'tf_static')
-             ],
-             output='screen'),
-
-        # Delay launch of robot description to allow Rviz2 to load first.
-        # Prevents visual bugs in the model.
-        TimerAction(
-            period=3.0,
-            actions=[
-                IncludeLaunchDescription(
-                    PythonLaunchDescriptionSource([description_launch]),
-                    launch_arguments=[('model', LaunchConfiguration('model'))],
-                    condition=IfCondition(LaunchConfiguration('description'))
-                )])
-    ])
+    rviz = Node(
+        package='rviz2',
+        executable='rviz2',
+        name='rviz2',
+        arguments=['-d', rviz2_config],
+        parameters=[{'use_sim_time': LaunchConfiguration('use_sim_time')}],
+        remappings=[
+            ('/tf', 'tf'),
+            ('/tf_static', 'tf_static')
+        ],
+        output='screen')
 
     ld = LaunchDescription(ARGUMENTS)
     ld.add_action(rviz)
