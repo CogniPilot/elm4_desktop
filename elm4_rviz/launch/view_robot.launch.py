@@ -25,18 +25,21 @@ def generate_launch_description():
     rviz2_config = PathJoinSubstitution(
         [pkg_elm4_rviz, 'rviz', 'nav2', 'robot.rviz'])
 
-    rviz = Node(
+    rviz_node = Node(
         package='rviz2',
         executable='rviz2',
         name='rviz2',
-        arguments=['-d', rviz2_config],
+        arguments=['-d', rviz2_config,
+                   "--ros-args", "--log-level", "fatal"],
         parameters=[{'use_sim_time': LaunchConfiguration('use_sim_time')}],
         remappings=[
             ('/tf', 'tf'),
             ('/tf_static', 'tf_static')
         ],
-        output='screen')
+        output='log')
+
+    rviz_ld = TimerAction(period=10.0, actions=[rviz_node])
 
     ld = LaunchDescription(ARGUMENTS)
-    ld.add_action(rviz)
+    ld.add_action(rviz_ld)
     return ld
