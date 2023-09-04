@@ -8,7 +8,7 @@ Panels:
         - /TF1/Frames1
         - /TF1/Tree1
       Splitter Ratio: 0.5833333134651184
-    Tree Height: 606
+    Tree Height: 563
   - Class: rviz_common/Selection
     Name: Selection
   - Class: rviz_common/Tool Properties
