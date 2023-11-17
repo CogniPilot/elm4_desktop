@@ -36,7 +36,7 @@ def generate_launch_description():
             ('/tf', 'tf'),
             ('/tf_static', 'tf_static')
         ],
-        output={'both': 'log'})
+        output='log')
 
     rviz_ld = TimerAction(period=10.0, actions=[rviz_node])
 
